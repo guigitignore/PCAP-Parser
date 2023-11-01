@@ -1,0 +1,119 @@
+public class Ethernet implements ILinkLayer {
+
+    public static String getMacAddress(PCAPBuffer buffer){
+        String[] bytes=new String[6];
+        for (int i=0;i<6;i++) bytes[i]=String.format("%02x",buffer.getUInt8());
+        return String.join(":",bytes);
+    }
+
+    public static String getProtocolAddress(PCAPBuffer buffer,int type){
+        String result;
+
+        switch(type){
+            case EtherType.IPv4:
+                result=IPv4.getIPv4Address(buffer);
+                break;
+            default:
+                result=buffer.toHexString();
+        }
+
+        return result;
+    }
+
+    private PCAPRecord record;
+    private PCAPBuffer buffer;
+
+    private String macDestination;
+    private String macSource;
+    private int protocolType;
+
+    private PCAPBuffer protocolData;
+    private IEthernetProtocol protocol;
+
+    public class EtherType{
+        public final static int IPv4=0x800;
+        
+        public final static int ARP=0x806;
+
+        public final static int IPv6=0x86dd;
+
+        public final static int ATA=0x88a2;
+    }
+
+
+    public Ethernet(PCAPRecord record){
+        
+
+        this.record=record;
+        buffer=record.getRecordBuffer();
+
+        
+
+        macDestination=getMacAddress(buffer);
+        macSource=getMacAddress(buffer);
+
+        protocolType=buffer.getUInt16();
+
+        protocolData=buffer.createSubPCAPBuffer(buffer.remaining());
+
+        switch (protocolType){
+            case EtherType.ARP:
+                protocol=new ARP(this);
+                break;
+            case EtherType.IPv4:
+                protocol=new IPv4(this);
+                break;
+                
+        }
+
+    }
+
+    public int getType() {
+        return PCAPRecord.LinkLayerType.ETHERNET;
+    }
+
+    public String getTypeName() {
+        return "Ethernet";
+    }
+
+    public String getSourceAddress(){
+        return macSource;
+    }
+
+    public String getDestinationAddress(){
+        return macDestination;
+    }
+
+    public PCAPRecord getPcapRecord(){
+        return record;
+    }
+
+
+    public int getProtocolType(){
+        return protocolType;
+    }
+
+    public PCAPBuffer getProtocolData(){
+        return protocolData;
+    }
+
+    public IEthernetProtocol getProtocol(){
+        return protocol;
+    }
+
+
+    public void info(){
+        System.out.println(getTypeName()+String.format("(0x%X)", getType()));
+        System.out.println("MAC source: "+getSourceAddress());
+        System.out.println("MAC destination: "+getDestinationAddress());
+
+        System.out.println("Protocol: "+String.format("0x%X",getProtocolType()));
+
+        System.out.println();
+
+        protocol.info();
+    }
+
+}
+
+
