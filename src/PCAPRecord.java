@@ -8,7 +8,7 @@ public class PCAPRecord {
     private LocalDateTime time; 
     private PCAPBuffer recordBuffer;
     private int recordNumber;
-    private LinkLayer frame;
+    private LinkLayer frame=null;
     private LinkLayerException exception=null;
 
     public static String getHardwareAddress(PCAPBuffer buffer,int type){

@@ -14,7 +14,7 @@ OUT_DIR=out
 
 SRC_DIR=src
 BUILD_DIR = build
-PCAP=res/arp.pcap
+PCAP=res/icmpPing.pcap
 
 # Recursive Wildcard function
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))

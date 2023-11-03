@@ -25,7 +25,7 @@ public class Ethernet extends LinkLayer {
     private int protocolType;
 
     private PCAPBuffer protocolData;
-    private EthernetProtocol protocol;
+    private EthernetProtocol protocol=null;
     private EthernetProtocolException exception=null;
 
     public class EtherType{
@@ -105,7 +105,7 @@ public class Ethernet extends LinkLayer {
             System.out.println(getProtocol().getTypeName()+" ("+hexa+"):");
             protocol.info();
         }else{
-            System.out.println("Ethernet protocol "+hexa+":");
+            System.out.println(getTypeName()+ " protocol "+hexa+":");
             System.out.println(exception.getMessage());
         }
     }
