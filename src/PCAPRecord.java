@@ -8,7 +8,8 @@ public class PCAPRecord {
     private LocalDateTime time; 
     private PCAPBuffer recordBuffer;
     private int recordNumber;
-    private ILinkLayer frame;
+    private LinkLayer frame;
+    private LinkLayerException exception=null;
 
     public static String getHardwareAddress(PCAPBuffer buffer,int type){
         String result;
@@ -48,14 +49,18 @@ public class PCAPRecord {
         recordBuffer=fileBuffer.createSubPCAPBuffer((int)orig_len);
         fileBuffer.skipBytes((int)(incl_len-orig_len));
 
-
-        switch(pcap.getLinkLayerType()){
-            case LinkLayerType.ETHERNET:
-                frame=new Ethernet(this);
-                break;
-            default:
-                frame=new UnknownLinkLayer(this);
+        try{
+            switch(pcap.getLinkLayerType()){
+                case LinkLayerType.ETHERNET:
+                    frame=new Ethernet(this);
+                    break;
+                default:
+                    throw new LinkLayerException("Unknown link layer type");
+            }
+        }catch(LinkLayerException e){
+            exception=e;
         }
+        
 
         
     }
@@ -68,7 +73,7 @@ public class PCAPRecord {
         return recordBuffer;
     }
 
-    public ILinkLayer getFrame(){
+    public LinkLayer getFrame(){
         return frame;
     }
 
@@ -94,7 +99,16 @@ public class PCAPRecord {
         System.out.println("Time: "+getTime());
         System.out.println("Lenght:"+getLength());
         System.out.println();
-        frame.info();
+
+        String hexa=String.format("0x%X",pcap.getLinkLayerType());
+
+        if (exception==null){
+            System.out.println(getFrame().getTypeName()+" ("+hexa+"):");
+            getFrame().info();
+        }else{
+            System.out.println("Link layer protocol "+hexa);
+            System.out.println(exception.getMessage());
+        }
     }
 
 }

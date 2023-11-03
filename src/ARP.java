@@ -1,6 +1,4 @@
-public class ARP implements IEthernetProtocol {
-    private Ethernet frame;
-    private PCAPBuffer buffer;
+public class ARP extends EthernetProtocol {
 
     private int hardwareAddressSpace;
     private int protocolAddressSpace;
@@ -8,7 +6,6 @@ public class ARP implements IEthernetProtocol {
 
     private String senderHardwareAddress;
     private String senderProtocolAddress;
-    private String targetHardwareAddress;
     private String targetProtocolAddress;
 
 
@@ -19,7 +16,9 @@ public class ARP implements IEthernetProtocol {
     }
 
 
-    ARP(Ethernet frame){
+    ARP(Ethernet frame) throws EthernetProtocolException{
+        super(frame);
+
         this.frame=frame;
         buffer=frame.getProtocolData();
 
@@ -30,17 +29,17 @@ public class ARP implements IEthernetProtocol {
         short protocolAddressLength=buffer.getUInt8();
 
         opCode=buffer.getUInt16();
+        if (opCode!=OpCode.REQUEST && opCode!=OpCode.REPLY){
+            throw new EthernetProtocolException("Invalid OpCode "+String.format("0x%04X", opCode)+"in ARP request");
+        }
 
         senderHardwareAddress=PCAPRecord.getHardwareAddress(buffer.createSubPCAPBuffer(hardwareAddressLength),hardwareAddressSpace);  
-        senderProtocolAddress=PCAPRecord.getHardwareAddress(buffer.createSubPCAPBuffer(protocolAddressLength),protocolAddressSpace); 
+        senderProtocolAddress=Ethernet.getProtocolAddress(buffer.createSubPCAPBuffer(protocolAddressLength),protocolAddressSpace); 
 
-        targetHardwareAddress=PCAPRecord.getHardwareAddress(buffer.createSubPCAPBuffer(hardwareAddressLength),hardwareAddressSpace);  
-        targetProtocolAddress=PCAPRecord.getHardwareAddress(buffer.createSubPCAPBuffer(protocolAddressLength),protocolAddressSpace);
+        buffer.skipBytes(hardwareAddressLength); //target hardware address not used
+  
+        targetProtocolAddress=Ethernet.getProtocolAddress(buffer.createSubPCAPBuffer(protocolAddressLength),protocolAddressSpace);
 
-    }
-
-    public Ethernet getFrame(){
-        return frame;
     }
 
 
@@ -50,12 +49,11 @@ public class ARP implements IEthernetProtocol {
 
     
     public void info() {
-        System.out.println("ARP:");
-        System.out.println("opcode: "+String.format("%x",opCode));
-        System.out.println("sender hardware address: "+senderHardwareAddress);
-        System.out.println("sender protocol address: "+senderProtocolAddress);
-        System.out.println("target hardware address: "+targetHardwareAddress);
-        System.out.println("target protocol address: "+targetProtocolAddress);
+        if (opCode==OpCode.REQUEST){
+            System.out.println("Who has "+targetProtocolAddress+"? Tell "+senderHardwareAddress);
+        }else if (opCode==OpCode.REPLY){
+            System.out.println(senderProtocolAddress+" is at "+senderHardwareAddress);
+        }
     }
 
     

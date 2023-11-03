@@ -1,5 +1,5 @@
 public class PCAPException extends Exception{
-    PCAPException(String message){
+    public PCAPException(String message){
         super(message);
     }
 }

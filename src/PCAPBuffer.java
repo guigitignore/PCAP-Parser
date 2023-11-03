@@ -76,7 +76,7 @@ public class PCAPBuffer{
 
     public String toHexString(){
         String result=new String();
-        while (remaining()!=0) result+=Integer.toHexString(getInt8());
+        while (remaining()!=0) result+=String.format("%02X",getUInt8());
         return result;
     }
 

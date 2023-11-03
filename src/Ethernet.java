@@ -1,4 +1,4 @@
-public class Ethernet implements ILinkLayer {
+public class Ethernet extends LinkLayer {
 
     public static String getMacAddress(PCAPBuffer buffer){
         String[] bytes=new String[6];
@@ -20,15 +20,13 @@ public class Ethernet implements ILinkLayer {
         return result;
     }
 
-    private PCAPRecord record;
-    private PCAPBuffer buffer;
-
     private String macDestination;
     private String macSource;
     private int protocolType;
 
     private PCAPBuffer protocolData;
-    private IEthernetProtocol protocol;
+    private EthernetProtocol protocol;
+    private EthernetProtocolException exception=null;
 
     public class EtherType{
         public final static int IPv4=0x800;
@@ -42,12 +40,7 @@ public class Ethernet implements ILinkLayer {
 
 
     public Ethernet(PCAPRecord record){
-        
-
-        this.record=record;
-        buffer=record.getRecordBuffer();
-
-        
+        super(record);    
 
         macDestination=getMacAddress(buffer);
         macSource=getMacAddress(buffer);
@@ -56,20 +49,23 @@ public class Ethernet implements ILinkLayer {
 
         protocolData=buffer.createSubPCAPBuffer(buffer.remaining());
 
-        switch (protocolType){
-            case EtherType.ARP:
-                protocol=new ARP(this);
-                break;
-            case EtherType.IPv4:
-                protocol=new IPv4(this);
-                break;
+        try{
+            switch (protocolType){
+                case EtherType.ARP:
+                    protocol=new ARP(this);
+                    break;
+                case EtherType.IPv4:
+                    protocol=new IPv4(this);
+                    break;
+                default:
+                    throw new EthernetProtocolException("Unknown Ethernet protocol");
                 
+            }
+        }catch(EthernetProtocolException e){
+            exception=e;
         }
+        
 
-    }
-
-    public int getType() {
-        return PCAPRecord.LinkLayerType.ETHERNET;
     }
 
     public String getTypeName() {
@@ -84,10 +80,6 @@ public class Ethernet implements ILinkLayer {
         return macDestination;
     }
 
-    public PCAPRecord getPcapRecord(){
-        return record;
-    }
-
 
     public int getProtocolType(){
         return protocolType;
@@ -97,21 +89,25 @@ public class Ethernet implements ILinkLayer {
         return protocolData;
     }
 
-    public IEthernetProtocol getProtocol(){
+    public EthernetProtocol getProtocol(){
         return protocol;
     }
 
 
     public void info(){
-        System.out.println(getTypeName()+String.format("(0x%X)", getType()));
         System.out.println("MAC source: "+getSourceAddress());
         System.out.println("MAC destination: "+getDestinationAddress());
 
-        System.out.println("Protocol: "+String.format("0x%X",getProtocolType()));
-
         System.out.println();
+        String hexa=String.format("0x%X",getProtocolType());
 
-        protocol.info();
+        if (exception==null){
+            System.out.println(getProtocol().getTypeName()+" ("+hexa+"):");
+            protocol.info();
+        }else{
+            System.out.println("Ethernet protocol "+hexa+":");
+            System.out.println(exception.getMessage());
+        }
     }
 
 }

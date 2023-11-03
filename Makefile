@@ -11,11 +11,10 @@ MANIFEST= META-INF/MANIFEST.MF
 # Main target and filename of the executable
 JARFILE = main.jar
 OUT_DIR=out
-PCAP=arp.pcap
 
 SRC_DIR=src
 BUILD_DIR = build
-RES_DIR=res
+PCAP=res/arp.pcap
 
 # Recursive Wildcard function
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
@@ -27,24 +26,20 @@ SRC = $(call rwildcard,$(SRC_DIR),*.java)
 
 # List of all the .class object files to produce
 OBJ = $(patsubst $(SRC_DIR)/%.java,$(BUILD_DIR)/%.class,$(SRC))
+OBJ_NAME = $(patsubst $(BUILD_DIR)/%.class,%,$(OBJ))
+OBJ_CLASS = $(patsubst $(BUILD_DIR)/%.class,%.class,$(OBJ))
 OBJ_DIRS = $(call uniq, $(dir $(OBJ)))
 
 # path of jar
 OUT=$(OUT_DIR)/$(JARFILE)
 
 
-all: $(OBJ_DIRS) $(OUT)
+all: $(OBJ_DIRS)
 	@$(MAKE) run -s
 
-$(OBJ_DIRS):
+$(OBJ_DIRS) $(OUT_DIR):
 	@echo "Creating folder $@..."
 	@mkdir -p $@	
-
-$(OUT_DIR): $(RES_DIR)
-	@echo "Creating folder $@..."
-	@mkdir -p $@
-	@echo "Copying ressources from $<..."
-	@cp $</* $@
 
 
 $(BUILD_DIR)/%.class: $(SRC_DIR)/%.java
@@ -53,12 +48,15 @@ $(BUILD_DIR)/%.class: $(SRC_DIR)/%.java
 
 $(OUT): $(OBJ) $(OUT_DIR)
 	@echo "Creating jar $@..."
-	@cd $(BUILD_DIR) && $(JAR) cvfm ../$(OUT) ../$(MANIFEST) *
+	@cd $(BUILD_DIR) && $(JAR) cvfm ../$(OUT) ../$(MANIFEST) $(OBJ_CLASS)
 
 clean:
 	@echo "Cleaning Build"
 	@rm -rf $(BUILD_DIR) $(OUT_DIR)
 
-run: 
+runjar: $(OUT)
 	@echo "Running $(OUT)..."
-	@cd $(OUT_DIR) && $(JAVA) -jar $(JARFILE) $(PCAP)
+	@$(JAVA) -jar $(OUT_DIR)/$(JARFILE)
+
+run: $(OBJ)
+	@$(JAVA) -cp $(BUILD_DIR) Main $(PCAP)

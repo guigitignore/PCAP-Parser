@@ -1,5 +1,5 @@
 public class PCAPRecordException extends Exception{
-    PCAPRecordException(String message){
+    public PCAPRecordException(String message){
         super(message);
     }
 }
