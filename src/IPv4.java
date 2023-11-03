@@ -71,6 +71,9 @@ public class IPv4 extends EthernetProtocol {
                 case Ipv4Type.ICMP:
                     protocol=new ICMP(this);
                     break;
+                case Ipv4Type.TCP:
+                    protocol=new TCP(this);
+                    break;
                 default:
                     throw new IPv4Exception("Unknown IPv4 protocol");
             }
