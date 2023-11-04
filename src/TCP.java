@@ -1,15 +1,14 @@
 import java.nio.charset.StandardCharsets;
 
-public class TCP extends Ipv4Protocol {
+public class TCP extends Ipv4Protocol implements ITransportLayerProtocol{
 
     private int sourcePort;
     private int destinationPort;
     private long sequenceNumber;
     private long acknowledgmentNumber;
-    private long relativeSequenceNumber=0;
-    private long relativeAcknowlegmentNumber=0;
 
     private PCAPBuffer protocolData=null;
+    private ApplicationProtocol protocol=null;
 
     public class TCPFlags{
         public boolean URG;
@@ -85,6 +84,10 @@ public class TCP extends Ipv4Protocol {
         return protocolData;
     }
 
+    public ApplicationProtocol getProtocol(){
+        return protocol;
+    }
+
     public long getSequenceNumber(){
         return sequenceNumber;
     }
@@ -93,19 +96,11 @@ public class TCP extends Ipv4Protocol {
         return acknowledgmentNumber;
     }
 
-    public long getRelativeSequenceNumber(){
-        return relativeSequenceNumber;
-    }
-
-    public long getRelativeAcknowlegmentNumber(){
-        return relativeAcknowlegmentNumber;
-    }
-
     public void info() {
         System.out.println("Source Port: "+sourcePort);
         System.out.println("Destination Port: "+destinationPort);
-        System.out.println("Sequence number: "+getSequenceNumber() +" / relative: "+getRelativeSequenceNumber());
-        System.out.println("Acknowledgement number: "+getAcknowlegmentNumber() +" / relative: "+ getRelativeAcknowlegmentNumber());
+        System.out.println("Sequence number: "+getSequenceNumber());
+        System.out.println("Acknowledgement number: "+getAcknowlegmentNumber());
         System.out.println("ACK: "+flags.ACK);
         System.out.println("SYN: "+flags.SYN);
         System.out.println("FIN: "+flags.FIN);
