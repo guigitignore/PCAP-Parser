@@ -18,20 +18,22 @@ public abstract class TransportLayerStreamManager<Protocol extends ITransportLay
 
     public abstract Stream createNewStream(String sourceAddress,String destinationAddress);
 
-    public void addInANewStream(Protocol segment){
+    public Stream addInANewStream(Protocol segment){
         Stream stream=createNewStream(segment.getSourceAddress(), segment.getDestinationAddress());
         stream.add(segment);
         streams.add(stream);
+        return stream;
     }
 
-    public void add(Protocol segment){
+    public Stream add(Protocol segment){
         for (int i=streams.size()-1;i>=0;i--){
-            TransportLayerStream<Protocol> stream=streams.get(i);
+            Stream stream=streams.get(i);
             if (stream.isPartOfStream(segment)){
                 stream.add(segment);
-                return;
+                return stream;
             }
         }
+        return addInANewStream(segment);
     }
 
     public void info(){
@@ -48,6 +50,7 @@ public abstract class TransportLayerStreamManager<Protocol extends ITransportLay
             stream.info();
 
             System.out.println();
+            streamCounter++;
         }
     }
 

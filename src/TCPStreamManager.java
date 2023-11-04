@@ -6,12 +6,11 @@ public class TCPStreamManager extends TransportLayerStreamManager<TCP,TCPStream>
     }
 
   
-    public void add(TCP segment){
+    public TCPStream add(TCP segment){
         if (segment.getFlags().SYN && !segment.getFlags().ACK){
-            addInANewStream(segment);
-            return;
+            return addInANewStream(segment);
         }
-        super.add(segment);
+        return super.add(segment);
     }
 
 
