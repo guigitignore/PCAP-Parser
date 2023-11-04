@@ -14,6 +14,8 @@ public class PCAP {
     private String filename;
     private long network;
 
+    private TCPStreamManager tcpStreamManager;
+
     
 
     PCAP(String filename) throws PCAPException{
@@ -44,6 +46,7 @@ public class PCAP {
         snaplen=fileBuffer.getUInt32();
         network=fileBuffer.getUInt32();
 
+        tcpStreamManager=new TCPStreamManager(this);
         records=new ArrayList<>();
 
         while (fileBuffer.hasRemaining()){
@@ -58,6 +61,10 @@ public class PCAP {
             
         }
         
+    }
+
+    public TCPStreamManager getTcpStreamManager(){
+        return tcpStreamManager;
     }
 
     public PCAPBuffer getFileBuffer(){

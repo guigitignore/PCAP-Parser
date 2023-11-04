@@ -59,4 +59,4 @@ runjar: $(OUT)
 	@$(JAVA) -jar $(OUT_DIR)/$(JARFILE)
 
 run: $(OBJ)
-	@$(JAVA) -cp $(BUILD_DIR) Main $(PCAP)
+	@$(JAVA) -cp $(BUILD_DIR) Main $(PCAP) -f
