@@ -13,6 +13,9 @@ public class Ethernet extends LinkLayer {
             case EtherType.IPv4:
                 result=IPv4.getIPv4Address(buffer);
                 break;
+            case EtherType.IPv6:
+                result=IPv6.getIPv6Address(buffer);
+                break;
             default:
                 result=buffer.toHexString();
         }
@@ -56,6 +59,9 @@ public class Ethernet extends LinkLayer {
                     break;
                 case EtherType.IPv4:
                     protocol=new IPv4(this);
+                    break;
+                case EtherType.IPv6:
+                    protocol=new IPv6(this);
                     break;
                 default:
                     throw new EthernetProtocolException("Unknown Ethernet protocol");

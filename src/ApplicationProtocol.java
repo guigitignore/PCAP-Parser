@@ -25,7 +25,7 @@ public abstract class ApplicationProtocol {
 
                 }
             }catch(ApplicationProtocolException e){
-                System.err.println(e.getMessage()); //debug
+                //System.err.println(e.getMessage()); //debug
             }
         }
 

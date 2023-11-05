@@ -1,8 +1,8 @@
 public class IPv6 extends EthernetProtocol implements INetworkLayerProtocol{
     public static String getIPv6Address(PCAPBuffer buffer){
         String[] parts=new String[8];
-        for (int i=0;i<8;i++) parts[i]=String.format("%04X",buffer.getUInt16());
-        return String.join(".",parts);
+        for (int i=0;i<8;i++) parts[i]=String.format("%04x",buffer.getUInt16());
+        return String.join(":",parts);
     }
 
     public class Ipv6Type{
@@ -22,6 +22,7 @@ public class IPv6 extends EthernetProtocol implements INetworkLayerProtocol{
     private String destinationAddress;
 
     private PCAPBuffer protocolData;
+    private NetworkLayerException exception=null;
 
     public IPv6(Ethernet frame) throws EthernetProtocolException {
         super(frame);
@@ -57,7 +58,7 @@ public class IPv6 extends EthernetProtocol implements INetworkLayerProtocol{
                     throw new NetworkLayerException("Unknown IPv6 protocol");
             }
         }catch(NetworkLayerException e){
-            //pass
+            exception=e;
         }
 
     }
@@ -97,7 +98,21 @@ public class IPv6 extends EthernetProtocol implements INetworkLayerProtocol{
 
     @Override
     public void info() {
-        
+        System.out.println("Data length: "+getLength());
+        System.out.println("Hop Limit: "+getHopLimit());
+        System.out.println("Source address: " +sourceAddress);
+        System.out.println("Destination address: "+destinationAddress);
+        System.out.println();
+
+        String hexa=String.format("0x%X",getProtocolType());
+
+        if (exception==null){
+            System.out.println(getProtocol().getTypeName()+" ("+hexa+"):");
+            protocol.info();
+        }else{
+            System.out.println(getTypeName()+ " protocol "+hexa+":");
+            System.out.println(exception.getMessage());
+        }
     }
 
 }
