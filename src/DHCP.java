@@ -502,13 +502,19 @@ public class DHCP extends ApplicationProtocol {
         else infos.put("Type", "Unknown");
 
         short htype=buffer.getUInt8();
-        short hlen=buffer.getUInt8();
-        short hops=buffer.getUInt8();
+        
+        //short hlen=buffer.getUInt8();
+        buffer.skipBytes(1);
+        //short hops=buffer.getUInt8();
+        buffer.skipBytes(1);
 
-        long xid=buffer.getUInt32();
+        //long xid=buffer.getUInt32();
+        buffer.skipBytes(4);
 
-        int secs=buffer.getUInt16();
-        int flags=buffer.getUInt16();
+        //int secs=buffer.getUInt16();
+        buffer.skipBytes(2);
+        //int flags=buffer.getUInt16();
+        buffer.skipBytes(2);
 
         PCAPBuffer ciaddr=buffer.createSubPCAPBuffer(4);
         infos.put("Client IP address", IPv4.getIPv4Address(ciaddr));
@@ -525,8 +531,10 @@ public class DHCP extends ApplicationProtocol {
         PCAPBuffer chaddr=buffer.createSubPCAPBuffer(16);
         infos.put("Client Hardware address", PCAPRecord.getHardwareAddress(chaddr, htype));
 
-        PCAPBuffer sname=buffer.createSubPCAPBuffer(64);
-        PCAPBuffer file=buffer.createSubPCAPBuffer(128);
+        //PCAPBuffer sname=buffer.createSubPCAPBuffer(64);
+        buffer.skipBytes(64);
+        //PCAPBuffer file=buffer.createSubPCAPBuffer(128);
+        buffer.skipBytes(128);
 
         options=new HashSet<>();
 
