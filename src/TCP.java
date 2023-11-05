@@ -46,13 +46,16 @@ public class TCP extends Ipv4Protocol implements ITransportLayerProtocol{
         buffer.skipBytes(2); //skip window size advertisement
         buffer.skipBytes(dataOffset-16); //we already read 16 bytes -> 4 lwords
 
-        int dataSize=buffer.remaining();
-
-        if (dataSize!=0) protocolData=buffer.createSubPCAPBuffer(buffer.remaining());
+       
 
         packet.getFrame().getPcapRecord().getPCAP().getTcpStreamManager().add(this);
-  
+        int dataSize=buffer.remaining();
 
+        if (dataSize!=0) {
+            protocolData=buffer.createSubPCAPBuffer(buffer.remaining());
+            protocol=ApplicationProtocol.getProtocol(this);
+        }
+  
     }
 
 
@@ -104,8 +107,11 @@ public class TCP extends Ipv4Protocol implements ITransportLayerProtocol{
         System.out.println("ACK: "+flags.ACK);
         System.out.println("SYN: "+flags.SYN);
         System.out.println("FIN: "+flags.FIN);
-        if (protocolData!=null)
-            System.out.println("DATA:"+new String(protocolData.getBytes(protocolData.remaining()),StandardCharsets.UTF_8));
+        if (protocol!=null){
+            System.out.println();
+            System.out.println(protocol.getTypeName()+ ":");
+            protocol.info();
+        } 
     }
     
 }

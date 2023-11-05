@@ -51,6 +51,7 @@ public class TransportLayerStream<Protocol extends ITransportLayerProtocol>{
             segment.info();
 
             System.out.println();
+            System.out.println();
             counter++;
         }
     }

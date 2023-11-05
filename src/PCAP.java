@@ -15,6 +15,7 @@ public class PCAP {
     private long network;
 
     private TCPStreamManager tcpStreamManager;
+    private UDPStreamManager updStreamManager;
 
     
 
@@ -47,6 +48,7 @@ public class PCAP {
         network=fileBuffer.getUInt32();
 
         tcpStreamManager=new TCPStreamManager(this);
+        updStreamManager=new UDPStreamManager(this);
         records=new ArrayList<>();
 
         while (fileBuffer.hasRemaining()){
@@ -65,6 +67,10 @@ public class PCAP {
 
     public TCPStreamManager getTcpStreamManager(){
         return tcpStreamManager;
+    }
+
+    public UDPStreamManager getUpdStreamManager(){
+        return updStreamManager;
     }
 
     public PCAPBuffer getFileBuffer(){

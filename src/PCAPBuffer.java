@@ -9,11 +9,13 @@ public class PCAPBuffer{
     PCAPBuffer(String filename) throws IOException{
         FileInputStream in=new FileInputStream(filename);
         buffer=ByteBuffer.wrap(in.readAllBytes());
+        buffer.mark();
         in.close();
     }
 
     PCAPBuffer(byte[] bytes){
         buffer=ByteBuffer.wrap(bytes);
+        buffer.mark();
     }
 
     public byte getInt8(){
@@ -78,6 +80,10 @@ public class PCAPBuffer{
         String result=new String();
         while (remaining()!=0) result+=String.format("%02X",getUInt8());
         return result;
+    }
+
+    public void reset(){
+        buffer.reset();
     }
 
 }

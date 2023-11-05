@@ -18,7 +18,7 @@ public abstract class TransportLayerStreamManager<Protocol extends ITransportLay
 
     public abstract Stream createNewStream(String sourceAddress,String destinationAddress);
 
-    public Stream addInANewStream(Protocol segment){
+    protected Stream addInANewStream(Protocol segment){
         Stream stream=createNewStream(segment.getSourceAddress(), segment.getDestinationAddress());
         stream.add(segment);
         streams.add(stream);
@@ -26,6 +26,9 @@ public abstract class TransportLayerStreamManager<Protocol extends ITransportLay
     }
 
     public Stream add(Protocol segment){
+        //reject
+        if (segment.getPacket().getFrame().getPcapRecord().getPCAP()!=pcap) return null;
+
         for (int i=streams.size()-1;i>=0;i--){
             Stream stream=streams.get(i);
             if (stream.isPartOfStream(segment)){

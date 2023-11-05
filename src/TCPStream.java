@@ -49,6 +49,7 @@ public class TCPStream extends TransportLayerStream<TCP>{
             segment.info();
 
             System.out.println();
+            System.out.println();
             counter++;
         }
     }
