@@ -98,7 +98,7 @@ public class IPv4 extends EthernetProtocol {
         return destinationAddress;
     }
 
-    public short getProtocolType(){
+    public int getProtocolType(){
         return protocolType;
     }
 
