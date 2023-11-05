@@ -14,7 +14,7 @@ OUT_DIR=out
 
 SRC_DIR=src
 BUILD_DIR = build
-PCAP=res/http.pcap
+PCAP=res/dns.pcap
 
 # Recursive Wildcard function
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst *,%,$2),$d))
@@ -59,4 +59,4 @@ runjar: $(OUT)
 	@$(JAVA) -jar $(OUT_DIR)/$(JARFILE)
 
 run: $(OBJ)
-	@$(JAVA) -cp $(BUILD_DIR) Main $(PCAP) -f
+	@$(JAVA) -cp $(BUILD_DIR) Main $(PCAP)

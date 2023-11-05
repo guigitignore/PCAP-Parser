@@ -1,8 +1,9 @@
 public abstract class ApplicationProtocol {
-    public final static int PROTOCOL_SUPPORTED=1;
+    public final static int PROTOCOL_SUPPORTED=2;
 
     public class ProtocolType{
         public final static int HTTP=0;
+        public final static int DNS=1;
     }
 
     protected PCAPBuffer buffer;
@@ -16,10 +17,12 @@ public abstract class ApplicationProtocol {
                 switch(i){
                     case ProtocolType.HTTP:
                         return new HTTP(segment);
+                    case ProtocolType.DNS:
+                        return new DNS(segment);
 
                 }
             }catch(ApplicationProtocolException e){
-                //ignore
+                System.err.println(e.getMessage()); //debug
             }
         }
 

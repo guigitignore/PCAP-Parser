@@ -1,5 +1,3 @@
-import java.nio.charset.StandardCharsets;
-
 public class TCP extends Ipv4Protocol implements ITransportLayerProtocol{
 
     private int sourcePort;

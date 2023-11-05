@@ -74,6 +74,9 @@ public class IPv4 extends EthernetProtocol {
                 case Ipv4Type.TCP:
                     protocol=new TCP(this);
                     break;
+                case Ipv4Type.UDP:
+                    protocol=new UDP(this);
+                    break;
                 default:
                     throw new IPv4Exception("Unknown IPv4 protocol");
             }

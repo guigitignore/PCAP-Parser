@@ -77,13 +77,33 @@ public class PCAPBuffer{
     }
 
     public String toHexString(){
+        int position=buffer.position();
+        buffer.reset();
         String result=new String();
         while (remaining()!=0) result+=String.format("%02X",getUInt8());
+        buffer.position(position);
         return result;
+    }
+
+    public byte[] readUntil(byte value){
+        int initialPos=buffer.position();
+        while (buffer.remaining()>0){
+            if (getInt8()==value){
+                int sizeToCopy=buffer.position()-initialPos;
+                buffer.position(initialPos);
+                return getBytes(sizeToCopy);
+            }
+        }
+        buffer.position(initialPos);
+        return null;
     }
 
     public void reset(){
         buffer.reset();
+    }
+
+    public int tell(){
+        return buffer.position();
     }
 
 }
