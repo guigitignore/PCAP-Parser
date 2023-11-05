@@ -1,9 +1,10 @@
 public abstract class ApplicationProtocol {
-    public final static int PROTOCOL_SUPPORTED=2;
+    public final static int PROTOCOL_SUPPORTED=3;
 
     public class ProtocolType{
         public final static int HTTP=0;
         public final static int DNS=1;
+        public final static int DHCP=2;
     }
 
     protected PCAPBuffer buffer;
@@ -19,6 +20,8 @@ public abstract class ApplicationProtocol {
                         return new HTTP(segment);
                     case ProtocolType.DNS:
                         return new DNS(segment);
+                    case ProtocolType.DHCP:
+                        return new DHCP(segment);
 
                 }
             }catch(ApplicationProtocolException e){
