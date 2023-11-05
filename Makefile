@@ -34,8 +34,8 @@ OBJ_DIRS = $(call uniq, $(dir $(OBJ)))
 OUT=$(OUT_DIR)/$(JARFILE)
 
 
-all: $(OBJ_DIRS)
-	@$(MAKE) run -s
+all: $(OBJ_DIRS) $(OBJ)
+
 
 $(OBJ_DIRS) $(OUT_DIR):
 	@echo "Creating folder $@..."
@@ -48,15 +48,17 @@ $(BUILD_DIR)/%.class: $(SRC_DIR)/%.java
 
 $(OUT): $(OBJ) $(OUT_DIR)
 	@echo "Creating jar $@..."
-	@cd $(BUILD_DIR) && $(JAR) cvfm ../$(OUT) ../$(MANIFEST) $(OBJ_CLASS)
+	@cd $(BUILD_DIR) && $(JAR) cvfm ../$(OUT) ../$(MANIFEST) *.class
 
 clean:
 	@echo "Cleaning Build"
 	@rm -rf $(BUILD_DIR) $(OUT_DIR)
 
+jar: $(OUT)
+
 runjar: $(OUT)
 	@echo "Running $(OUT)..."
-	@$(JAVA) -jar $(OUT_DIR)/$(JARFILE)
+	@$(JAVA) -jar $(OUT_DIR)/$(JARFILE) $(PCAP)
 
 run: $(OBJ)
-	@$(JAVA) -cp $(BUILD_DIR) Main $(PCAP) -f
+	@$(JAVA) -cp $(BUILD_DIR) Main $(PCAP)
