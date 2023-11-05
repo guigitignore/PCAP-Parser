@@ -1,4 +1,4 @@
-public class IPv6 extends EthernetProtocol {
+public class IPv6 extends EthernetProtocol implements INetworkLayerProtocol{
     public static String getIPv6Address(PCAPBuffer buffer){
         String[] parts=new String[8];
         for (int i=0;i<8;i++) parts[i]=String.format("%04X",buffer.getUInt16());
@@ -17,7 +17,7 @@ public class IPv6 extends EthernetProtocol {
     private int hopLimit;
     private int protocolType;
 
-    private ITransportLayerProtocol protocol;
+    private IpProtocol protocol;
     private String sourceAddress;
     private String destinationAddress;
 
@@ -42,18 +42,22 @@ public class IPv6 extends EthernetProtocol {
 
         protocolData=buffer.createSubPCAPBuffer(payloadLength);
 
-        switch(protocolType){
-            case Ipv6Type.ICMP:
-                //not supported
-                break;
-            case Ipv6Type.TCP:
-                protocol=new TCP(this);
-                break;
-            case Ipv6Type.UDP:
-                protocol=new UDP(this);
-                break;
-            default:
-                throw new IPv6Exception("Unknown IPv6 protocol");
+        try{
+            switch(protocolType){
+                case Ipv6Type.ICMP:
+                    //not supported
+                    break;
+                case Ipv6Type.TCP:
+                    protocol=new TCP(this);
+                    break;
+                case Ipv6Type.UDP:
+                    protocol=new UDP(this);
+                    break;
+                default:
+                    throw new NetworkLayerException("Unknown IPv6 protocol");
+            }
+        }catch(NetworkLayerException e){
+            //pass
         }
 
     }
@@ -79,7 +83,7 @@ public class IPv6 extends EthernetProtocol {
         return destinationAddress;
     }
 
-    public ITransportLayerProtocol getProtocol(){
+    public IpProtocol getProtocol(){
         return protocol;
     }
 
@@ -95,5 +99,5 @@ public class IPv6 extends EthernetProtocol {
     public void info() {
         
     }
-    
+
 }

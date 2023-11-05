@@ -1,24 +1,24 @@
-public class UDP extends Ipv4Protocol implements ITransportLayerProtocol{
+public class UDP extends IpProtocol implements ITransportLayerProtocol{
 
     private int sourcePort;
     private int destinationPort;
     private ApplicationProtocol protocol=null;
     private PCAPBuffer protocolData=null;
 
-    public UDP(IPv4 packet) throws IPv4Exception{
+    public UDP(INetworkLayerProtocol packet) throws NetworkLayerException{
         super(packet);
 
         sourcePort=buffer.getUInt16();
         destinationPort=buffer.getUInt16();
 
         int lenght=buffer.getUInt16();
-        if (lenght<8) throw new IPv4Exception("Insuffisiant length for UDP segment");
+        if (lenght<8) throw new NetworkLayerException("Insuffisiant length for UDP segment");
 
 
         buffer.skipBytes(2); //checksum
 
         int dataLenght=lenght-8;
-        if (dataLenght>buffer.remaining()) throw new IPv4Exception("UDP data is not compleete");
+        if (dataLenght>buffer.remaining()) throw new NetworkLayerException("UDP data is not compleete");
 
         protocolData=buffer.createSubPCAPBuffer(dataLenght);
 

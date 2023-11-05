@@ -2,7 +2,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ICMP extends Ipv4Protocol{
+public class ICMP extends IpProtocol{
 
     public class ICMPType{
         public final static int DestinationUnreachable=3;
@@ -21,7 +21,7 @@ public class ICMP extends Ipv4Protocol{
     private LinkedHashMap<String,String> infos;
 
 
-    ICMP(IPv4 packet){
+    ICMP(INetworkLayerProtocol packet){
         super(packet);
         infos=new LinkedHashMap<>();
 

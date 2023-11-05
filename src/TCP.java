@@ -1,4 +1,4 @@
-public class TCP extends Ipv4Protocol implements ITransportLayerProtocol{
+public class TCP extends IpProtocol implements ITransportLayerProtocol{
 
     private int sourcePort;
     private int destinationPort;
@@ -20,7 +20,7 @@ public class TCP extends Ipv4Protocol implements ITransportLayerProtocol{
     private TCPFlags flags;
 
 
-    public TCP(IPv4 packet){
+    public TCP(INetworkLayerProtocol packet){
         super(packet);
 
         sourcePort=buffer.getUInt16();

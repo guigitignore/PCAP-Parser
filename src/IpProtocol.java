@@ -1,14 +1,14 @@
-public abstract class Ipv4Protocol {
-    protected IPv4 packet;
+public abstract class IpProtocol {
+    protected INetworkLayerProtocol packet;
     protected PCAPBuffer buffer;
 
-    public Ipv4Protocol(IPv4 packet){
+    public IpProtocol(INetworkLayerProtocol packet){
         this.packet=packet;
         buffer=packet.getProtocolData();
     }
 
 
-    public IPv4 getPacket(){
+    public INetworkLayerProtocol getPacket(){
         return packet;
     }
 

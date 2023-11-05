@@ -1,11 +1,11 @@
-public class IPv4 extends EthernetProtocol {
+public class IPv4 extends EthernetProtocol implements INetworkLayerProtocol{
     public static String getIPv4Address(PCAPBuffer buffer){
         String[] bytes=new String[4];
         for (int i=0;i<4;i++) bytes[i]=Integer.toString(buffer.getUInt8());
         return String.join(".",bytes);
     }
 
-    private IPv4Exception exception=null;
+    private NetworkLayerException exception=null;
     private short protocolType;
     private short timeToLive;
     private boolean MF;
@@ -18,7 +18,7 @@ public class IPv4 extends EthernetProtocol {
     private String destinationAddress;
 
     private PCAPBuffer protocolData;
-    Ipv4Protocol protocol=null;
+    IpProtocol protocol=null;
 
     public class Ipv4Type{
         public final static int ICMP=1;
@@ -65,7 +65,7 @@ public class IPv4 extends EthernetProtocol {
         protocolData=buffer.createSubPCAPBuffer(dataLenght);
 
         try{
-            if (MF) throw new IPv4Exception("IP fragmentation not supported");
+            if (MF) throw new NetworkLayerException("IP fragmentation not supported");
             
             switch(protocolType){
                 case Ipv4Type.ICMP:
@@ -78,10 +78,10 @@ public class IPv4 extends EthernetProtocol {
                     protocol=new UDP(this);
                     break;
                 default:
-                    throw new IPv4Exception("Unknown IPv4 protocol");
+                    throw new NetworkLayerException("Unknown IPv4 protocol");
             }
 
-        }catch(IPv4Exception e){
+        }catch(NetworkLayerException e){
             exception=e;
         }
     }
@@ -102,7 +102,7 @@ public class IPv4 extends EthernetProtocol {
         return protocolType;
     }
 
-    public Ipv4Protocol getProtocol(){
+    public IpProtocol getProtocol(){
         return protocol;
     }
 

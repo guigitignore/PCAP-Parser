@@ -11,7 +11,7 @@ public interface ITransportLayerProtocol {
 
     public void info();
 
-    public IPv4 getPacket();
+    public INetworkLayerProtocol getPacket();
 
     public PCAPBuffer getProtocolData();
 
